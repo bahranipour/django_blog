@@ -1,1 +1,1 @@
-# django_blog
+# This blog is built with Python and Django.
