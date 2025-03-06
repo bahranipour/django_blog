@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock title %}
+{% block content %}
+<div class="container mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags}} alert-dismissible fade show text-right" role="alert">
+              
+                {{message}}
+                <button type="button" class="close float-left" data-dismiss="alert" aria-label="Close">&times;</button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <h1 class="text-center mb-4">{{ post.title }}</h1>
+    <div class="row mt-3">
+        <div class="col-md-8 mx-auto">
+
+            <div class="card mb-4 text-right" dir="rtl">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <p class="card-text">{{ post.content }}</p>
+                    <p class="text-muted">نوشته شده توسط: {{ post.author }}</p>
+                    <p class="text-muted">دسته‌بندی: <a href="{% url 'posts_by_category' category_id=post.category.id %}">{{ post.category.name }}</a></p>
+                    <p class="text-muted">تگ‌ها: 
+                        {% for tag in post.tags.all %}
+                            <a href="{% url 'posts_by_tag' tag_id=tag.id %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                    <p class="text-muted">تاریخ ایجاد: {{ post.created_at }}</p>
+                    <p class="text-muted">آخرین بروزرسانی: {{ post.updated_at }}</p>
+                    <p class="text-muted">تعداد نظرات: {{ post.comments.count }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'post_list' %}" class="btn btn-primary btn-block">بازگشت</a>
+                </div>
+            </div>
+        
+            <!-- نظرات -->
+            <h2 class="mt-4 text-center">نظرات ({{ post.comments.count }})</h2>
+            <hr>
+            {% for comment in comments %}
+                <div class="card mb-3 bg-light text-right" dir="rtl">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ comment.name }}</h5>
+                        <p class="card-text">{{ comment.content }}</p>
+                        <p class="text-muted">تاریخ: {{ comment.created_at }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        
+            <!-- فرم نظر -->
+            <div class="card">
+                <div class="card-header bg-success">
+                    <h2 class="text-center text-white">نظر خود را بنویسید</h2>
+                </div>
+                <div class="card-body bg-light">
+                    <form method="post" class="mb-4 text-right" dir="rtl">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.name.label_tag }}
+                            {{ form.name }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email.label_tag }}
+                            {{ form.email }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.content.label_tag }}
+                            {{ form.content }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">ارسال نظر</button>
+                    </form>
+                </div>
+            </div>
+            
+
+        </div>
+    </div>
+   
+</div>
+<br><br><br>
+{% endblock %}
